@@ -4,17 +4,37 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
+import com.timesproject.mynotes.adapter.NoteListAdapter
+import com.timesproject.mynotes.database.TextNoteDBHelper
 import com.timesproject.mynotes.databinding.ActivityStartupBinding
+import com.timesproject.mynotes.listener.MainActivityListener
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), MainActivityListener {
 
     private lateinit var binding: ActivityStartupBinding
+    private lateinit var noteDBHelper: TextNoteDBHelper
+    private var noteIdListAdapter: NoteListAdapter? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setViewBinding()
+        noteDBHelper = TextNoteDBHelper(this)
+        loadNotes()
         setSupportActionBar(binding.toolbar)
+    }
+
+    private fun loadNotes() {
+        val noteIdList = getNoteIdList()
+        if(!noteIdList.isNullOrEmpty()) {
+            noteIdListAdapter = NoteListAdapter(noteIdList, this)
+            binding.noteListRecyclerView.visibility = View.VISIBLE
+            binding.noteListRecyclerView.adapter = noteIdListAdapter
+        } else {
+            binding.noteListRecyclerView.visibility = View.GONE
+        }
     }
 
     private fun setViewBinding() {
@@ -43,7 +63,21 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    override fun onBackPressed() {
-        super.onBackPressed()
+    override fun onClickOfNoteId(noteId: String?) {
+        val intent = Intent(this, FragmentLoadActivity::class.java)
+        intent.putExtra("noteId", noteId)
+        startActivity(intent)
+        Toast.makeText(this, noteId + "Loaded" , Toast.LENGTH_SHORT).show()
+        //Move to load the note
+    }
+
+    override fun onResume() {
+        super.onResume()
+        val noteIdList = getNoteIdList()
+        if(!noteIdList.isNullOrEmpty()) { noteIdListAdapter?.setNoteIdList(noteIdList) }
+    }
+
+    private fun getNoteIdList() : List<String?>? {
+        return noteDBHelper.readAllNotes()?.mapNotNull { it.noteId }
     }
 }

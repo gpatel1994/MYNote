@@ -1,4 +1,4 @@
-package com.timesproject.mynotes
+package com.timesproject.mynotes.util
 
 import java.text.SimpleDateFormat
 import java.util.Locale
@@ -10,7 +10,5 @@ class NoteUtil {
         fun generateNoteId() : String? {
             return SimpleDateFormat("yyyyMMDDHHmmss", Locale.US).format(Date())
         }
-
     }
-
 }

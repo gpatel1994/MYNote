@@ -71,16 +71,19 @@ class TextNoteDBHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NA
     }
 
     @SuppressLint("Recycle")
-    fun readTextNote(noteId: String): ArrayList<TextNote>? {
+    fun readTextNote(noteId: String?): ArrayList<TextNote>? {
         val noteList = ArrayList<TextNote>()
         val db = writableDatabase
         var cursor: Cursor? = null
         try {
-            cursor = db.rawQuery(
-                "select * from " + TextNoteDataBaseContract.TextNoteEntry.TABLE_NAME
-                        + " WHERE " + TextNoteDataBaseContract.TextNoteEntry.NOTE_ID
-                        + "='" + noteId + "'", null
-            )
+            noteId?.let {
+                cursor = db.rawQuery(
+                    "select * from " + TextNoteDataBaseContract.TextNoteEntry.TABLE_NAME
+                            + " WHERE " + TextNoteDataBaseContract.TextNoteEntry.NOTE_ID
+                            + "='" + it + "'", null
+                )
+            }
+
         } catch (e: SQLiteException) {
             // if table not yet present, create it
             db.execSQL(SQL_CREATE_ENTRIES)
