@@ -9,6 +9,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import com.timesproject.mynotes.database.TextNoteDBHelper
 import com.timesproject.mynotes.databinding.FragmentNoteListBinding
+import com.timesproject.mynotes.listener.FragmentLoadActivityListener
 import com.timesproject.mynotes.model.TextNote
 import com.timesproject.mynotes.util.NoteUtil
 
@@ -26,10 +27,13 @@ class NewNoteFragment : Fragment() {
             return fragment
         }
     }
+
     private lateinit var binding: FragmentNoteListBinding
     private lateinit var noteDBHelper: TextNoteDBHelper
     private var noteId:String? = null
-    private var noteText:String? = null
+    private var note: TextNote? = null
+    private var activityListener : FragmentLoadActivityListener? = null
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -42,14 +46,21 @@ class NewNoteFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initFromBundle()
+    }
+
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+        activityListener = activity as? FragmentLoadActivityListener
         setNoteText()
         binding.saveNoteButton.setOnClickListener { onClickSaveButton() }
     }
 
     private fun setNoteText() {
-        noteText = noteDBHelper.readTextNote(noteId)?.get(0)?.noteText
-        if(!noteText.isNullOrEmpty()) {
-            binding.inputText.setText(noteText)
+        note = noteDBHelper.readTextNote(noteId)?.get(0)
+        note?.let { txtNote ->
+            txtNote.noteTitle?.let { activityListener?.setToolbarTitle(it) }
+            txtNote.noteText?.let { binding.inputText.setText(it) }
+            binding.noteTitleText.visibility = View.GONE
         }
     }
 
@@ -61,10 +72,14 @@ class NewNoteFragment : Fragment() {
 
     private fun onClickSaveButton() {
         val noteId = NoteUtil.generateNoteId()
+        var noteTitle : String? = binding.noteTitleText.editableText.toString()
         val noteText = binding.inputText.editableText.toString()
 
-        if(!noteId.isNullOrEmpty() && noteText.isNotEmpty()) {
-            val result = noteDBHelper.saveNoteInDB(TextNote(noteId, noteText))
+        if(noteTitle.isNullOrEmpty()) {
+            noteTitle = NoteUtil.getFirstNthCharactersFromText(noteText)
+        }
+        if(!noteId.isNullOrEmpty() && !noteTitle.isNullOrEmpty() && noteText.isNotEmpty()) {
+            val result = noteDBHelper.saveNoteInDB(TextNote(noteId, noteTitle, noteText))
             if(result) {
                 Toast.makeText(context, "Note Saved", Toast.LENGTH_LONG).show()
                 activity?.supportFragmentManager?.popBackStack()
@@ -72,6 +87,10 @@ class NewNoteFragment : Fragment() {
                 Toast.makeText(context, "Error in Saving Note", Toast.LENGTH_LONG).show()
             }
         }
+    }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        activityListener = null
     }
 }

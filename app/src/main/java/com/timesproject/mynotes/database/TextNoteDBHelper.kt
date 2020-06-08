@@ -12,15 +12,16 @@ import com.timesproject.mynotes.model.TextNote
 
 class TextNoteDBHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION) {
     companion object {
-        val DATABASE_VERSION = 1
-        val DATABASE_NAME = "MyNote.db"
+        const val DATABASE_VERSION = 1
+        const val DATABASE_NAME = "MyNote.db"
 
-        private val SQL_CREATE_ENTRIES =
+        const val SQL_CREATE_ENTRIES =
             "CREATE TABLE " + TextNoteDataBaseContract.TextNoteEntry.TABLE_NAME + " (" +
                     TextNoteDataBaseContract.TextNoteEntry.NOTE_ID + " TEXT PRIMARY KEY," +
-                    TextNoteDataBaseContract.TextNoteEntry.NOTE_TEXT + " TEXT)"
+                    TextNoteDataBaseContract.TextNoteEntry.NOTE_TEXT + " TEXT," +
+                    TextNoteDataBaseContract.TextNoteEntry.NOTE_TITLE + " TEXT)"
 
-        private val SQL_DELETE_ENTRIES =
+        const val SQL_DELETE_ENTRIES =
             "DROP TABLE IF EXISTS " + TextNoteDataBaseContract.TextNoteEntry.TABLE_NAME
     }
 
@@ -48,6 +49,7 @@ class TextNoteDBHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NA
         val values = ContentValues()
 
         values.put(TextNoteDataBaseContract.TextNoteEntry.NOTE_ID, textNote.noteId)
+        values.put(TextNoteDataBaseContract.TextNoteEntry.NOTE_TITLE, textNote.noteTitle)
         values.put(TextNoteDataBaseContract.TextNoteEntry.NOTE_TEXT, textNote.noteText)
 
         // Insert the new row, returning the primary key value of the new row
@@ -91,12 +93,14 @@ class TextNoteDBHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NA
         }
 
         var noteText: String
+        var noteTitle: String
         cursor?.let {
             if (it.moveToFirst()) {
                 while (!it.isAfterLast) {
+                    noteTitle = it.getString(it.getColumnIndex(TextNoteDataBaseContract.TextNoteEntry.NOTE_TITLE))
                     noteText =
                         it.getString(it.getColumnIndex(TextNoteDataBaseContract.TextNoteEntry.NOTE_TEXT))
-                    noteList.add(TextNote(noteId, noteText))
+                    noteList.add(TextNote(noteId, noteTitle, noteText))
                     it.moveToNext()
                 }
             }
@@ -121,15 +125,18 @@ class TextNoteDBHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NA
         }
         var noteId: String
         var noteText: String
+        var noteTitle: String
         cursor?.let {
             if (it.moveToFirst()) {
                 while (!it.isAfterLast) {
                     noteId =
                         cursor.getString(cursor.getColumnIndex(TextNoteDataBaseContract.TextNoteEntry.NOTE_ID))
+                    noteTitle =
+                        cursor.getString(cursor.getColumnIndex(TextNoteDataBaseContract.TextNoteEntry.NOTE_TITLE))
                     noteText =
                         cursor.getString(cursor.getColumnIndex(TextNoteDataBaseContract.TextNoteEntry.NOTE_TEXT))
 
-                    noteList.add(TextNote(noteId, noteText))
+                    noteList.add(TextNote(noteId, noteTitle, noteText))
                     cursor.moveToNext()
                 }
 

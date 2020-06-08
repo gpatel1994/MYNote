@@ -12,6 +12,7 @@ import com.timesproject.mynotes.adapter.NoteListAdapter
 import com.timesproject.mynotes.database.TextNoteDBHelper
 import com.timesproject.mynotes.databinding.ActivityStartupBinding
 import com.timesproject.mynotes.listener.MainActivityListener
+import com.timesproject.mynotes.model.TextNote
 
 class MainActivity : AppCompatActivity(), MainActivityListener {
 
@@ -77,7 +78,7 @@ class MainActivity : AppCompatActivity(), MainActivityListener {
         if(!noteIdList.isNullOrEmpty()) { noteIdListAdapter?.setNoteIdList(noteIdList) }
     }
 
-    private fun getNoteIdList() : List<String?>? {
-        return noteDBHelper.readAllNotes()?.mapNotNull { it.noteId }
+    private fun getNoteIdList() : List<TextNote>? {
+        return noteDBHelper.readAllNotes()
     }
 }

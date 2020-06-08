@@ -7,6 +7,7 @@ object TextNoteDataBaseContract {
         companion object {
             const val TABLE_NAME = "textNote"
             const val NOTE_ID = "noteId"
+            const val NOTE_TITLE = "noteTitle"
             const val NOTE_TEXT = "noteText"
         }
     }

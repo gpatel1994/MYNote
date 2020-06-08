@@ -8,13 +8,41 @@
         android:orientation="vertical"
         tools:context=".FirstFragment">
 
-        <androidx.appcompat.widget.AppCompatEditText
-            android:id="@+id/input_text"
+        <LinearLayout
+            android:id="@+id/note_text_ll"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/color_transparent"
-            android:gravity="top"
-            tools:text="@string/demo_text"/>
+            android:orientation="vertical">
+
+            <EditText
+                android:id="@+id/note_title_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/layout_16dp"
+                android:layout_marginTop="@dimen/layout_10dp"
+                android:layout_marginEnd="@dimen/layout_16dp"
+                android:background="@color/color_transparent"
+                android:textSize="@dimen/font_20sp"
+                android:gravity="top"
+                android:hint="@string/title_hint_text"
+                android:paddingTop="@dimen/layout_4dp"
+                android:paddingBottom="@dimen/layout_4dp"
+                android:inputType="textCapSentences"
+                tools:ignore="Autofill" />
+
+            <androidx.appcompat.widget.AppCompatEditText
+                android:id="@+id/input_text"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:textSize="@dimen/font_16sp"
+                android:layout_marginStart="@dimen/layout_16dp"
+                android:layout_marginTop="@dimen/layout_4dp"
+                android:layout_marginEnd="@dimen/layout_16dp"
+                android:background="@color/color_transparent"
+                android:gravity="top"
+                android:hint="@string/demo_text"
+                android:inputType="textCapSentences"/>
+        </LinearLayout>
 
         <Button
             android:id="@+id/save_note_button"
@@ -22,7 +50,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal|bottom"
             android:layout_margin="@dimen/layout_20dp"
-            android:text="@string/save_note"/>
+            android:text="@string/save_note" />
     </FrameLayout>
 
 </layout>

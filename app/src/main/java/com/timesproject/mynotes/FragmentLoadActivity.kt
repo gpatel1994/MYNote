@@ -5,8 +5,9 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentTransaction
 import com.timesproject.mynotes.databinding.ActivtiyFragmentLoadBinding
+import com.timesproject.mynotes.listener.FragmentLoadActivityListener
 
-class FragmentLoadActivity : FragmentActivity() {
+class FragmentLoadActivity : FragmentActivity(), FragmentLoadActivityListener {
 
     private var fragmentTransaction:FragmentTransaction?= null
     lateinit var binding: ActivtiyFragmentLoadBinding
@@ -14,11 +15,11 @@ class FragmentLoadActivity : FragmentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activtiy_fragment_load)
-        binding.fragmentLoadToolbar.title = "New Note"
-        setActionBar(binding.fragmentLoadToolbar)
         initIntent()
         setFragmentManager()
         launchFragment()
+        setToolbarTitle(null)
+        setActionBar(binding.fragmentLoadToolbar)
     }
 
     private fun initIntent() {
@@ -36,5 +37,10 @@ class FragmentLoadActivity : FragmentActivity() {
             fragmentTransaction?.replace(R.id.base_fragment, NewNoteFragment.newInstance(noteId))
         }
         fragmentTransaction?.commit()
+    }
+
+    override fun setToolbarTitle(toolbarTitle: String?) {
+        val title = if (!toolbarTitle.isNullOrEmpty()) toolbarTitle else "New Note"
+        binding.fragmentLoadToolbar.title = title
     }
 }

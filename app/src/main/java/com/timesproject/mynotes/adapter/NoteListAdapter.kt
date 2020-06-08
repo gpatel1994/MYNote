@@ -7,10 +7,11 @@ import androidx.recyclerview.widget.RecyclerView
 import com.timesproject.mynotes.R
 import com.timesproject.mynotes.databinding.AdapterNoteListBinding
 import com.timesproject.mynotes.listener.MainActivityListener
+import com.timesproject.mynotes.model.TextNote
 import com.timesproject.mynotes.util.listSize
 
 class NoteListAdapter(
-    private var noteListId: List<String?>?,
+    private var noteList: List<TextNote>?,
     internal var listener: MainActivityListener?
 ) : RecyclerView.Adapter<NoteListAdapter.ViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -22,34 +23,41 @@ class NoteListAdapter(
         )
     }
 
-    override fun getItemCount(): Int = noteListId.listSize()
+    override fun getItemCount(): Int = noteList.listSize()
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        noteListId?.get(position)?.let {
+        noteList?.get(position)?.let {
             holder.setNoteId(it)
         }
     }
 
-    fun setNoteIdList(noteIdList: List<String?>) {
-        noteListId = noteIdList
+    fun setNoteIdList(noteIdList: List<TextNote>) {
+        noteList = noteIdList
         notifyDataSetChanged()
     }
 
     inner class ViewHolder(private val binding: AdapterNoteListBinding) :
         RecyclerView.ViewHolder(binding.root) {
-        private var noteId: String? = null
+        private var note: TextNote? = null
 
         init {
             binding.noteIdTextView.setOnClickListener { loadSelectedNoteFromNoteId() }
         }
 
         private fun loadSelectedNoteFromNoteId() {
-            noteId?.let { listener?.onClickOfNoteId(it) }
+            note?.let { listener?.onClickOfNoteId(it.noteId) }
         }
 
-        fun setNoteId(noteId: String) {
-            this.noteId = noteId
-            binding.noteIdTextView.text = noteId
+        fun setNoteId(note: TextNote) {
+            this.note = note
+            setNoteTitleToTextView()
+
+        }
+
+        private fun setNoteTitleToTextView() {
+            note?.let {
+                binding.noteIdTextView.text = it.noteTitle
+            }
         }
     }
 }
