@@ -51,7 +51,6 @@ class NoteListAdapter(
         fun setNoteId(note: TextNote) {
             this.note = note
             setNoteTitleToTextView()
-
         }
 
         private fun setNoteTitleToTextView() {

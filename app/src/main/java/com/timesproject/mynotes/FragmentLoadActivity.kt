@@ -1,36 +1,41 @@
 package com.timesproject.mynotes
 
 import android.os.Bundle
+import androidx.annotation.VisibleForTesting
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentTransaction
 import com.timesproject.mynotes.databinding.ActivtiyFragmentLoadBinding
 import com.timesproject.mynotes.listener.FragmentLoadActivityListener
+import com.timesproject.mynotes.util.CommonConstants
 
 class FragmentLoadActivity : FragmentActivity(), FragmentLoadActivityListener {
 
-    private var fragmentTransaction:FragmentTransaction?= null
+    internal var fragmentTransaction:FragmentTransaction?= null
     lateinit var binding: ActivtiyFragmentLoadBinding
-    private var noteId : String? = null
+    internal var noteId : String? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activtiy_fragment_load)
         initIntent()
         setFragmentManager()
         launchFragment()
-        setToolbarTitle(null)
+        setToolbarTitle(CommonConstants.NEW_NOTE)
         setActionBar(binding.fragmentLoadToolbar)
     }
 
-    private fun initIntent() {
-        noteId = intent.extras?.getString("noteId")
+    @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
+    fun initIntent() {
+        noteId = intent.extras?.getString(CommonConstants.KEY_NOTE_ID)
     }
 
-    private fun setFragmentManager() {
+    @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
+    fun setFragmentManager() {
         fragmentTransaction = supportFragmentManager.beginTransaction()
     }
 
-    private fun launchFragment() {
+    @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
+    fun launchFragment() {
         if(noteId.isNullOrEmpty()) {
             fragmentTransaction?.replace(R.id.base_fragment, NewNoteFragment.newInstance())
         } else {
@@ -40,7 +45,6 @@ class FragmentLoadActivity : FragmentActivity(), FragmentLoadActivityListener {
     }
 
     override fun setToolbarTitle(toolbarTitle: String?) {
-        val title = if (!toolbarTitle.isNullOrEmpty()) toolbarTitle else "New Note"
-        binding.fragmentLoadToolbar.title = title
+        toolbarTitle?.let { binding.fragmentLoadToolbar.title = it }
     }
 }
