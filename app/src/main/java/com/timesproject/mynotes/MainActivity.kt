@@ -13,6 +13,7 @@ import com.timesproject.mynotes.database.TextNoteDBHelper
 import com.timesproject.mynotes.databinding.ActivityStartupBinding
 import com.timesproject.mynotes.listener.MainActivityListener
 import com.timesproject.mynotes.model.TextNote
+import com.timesproject.mynotes.util.CommonConstants
 
 class MainActivity : AppCompatActivity(), MainActivityListener {
 
@@ -40,7 +41,7 @@ class MainActivity : AppCompatActivity(), MainActivityListener {
 
     private fun setViewBinding() {
         binding = DataBindingUtil.setContentView(this, R.layout.activity_startup)
-        binding.toolbar.title = "My Notes"
+        binding.toolbar.title = CommonConstants.MY_NOTES
         binding.fab.setOnClickListener { loadNewNoteFragment() }
     }
 
@@ -66,10 +67,10 @@ class MainActivity : AppCompatActivity(), MainActivityListener {
 
     override fun onClickOfNoteId(noteId: String?) {
         val intent = Intent(this, FragmentLoadActivity::class.java)
-        intent.putExtra("noteId", noteId)
+        intent.putExtra(CommonConstants.KEY_NOTE_ID, noteId)
         startActivity(intent)
+        //will remove toast afterwards
         Toast.makeText(this, noteId + "Loaded" , Toast.LENGTH_SHORT).show()
-        //Move to load the note
     }
 
     override fun onResume() {

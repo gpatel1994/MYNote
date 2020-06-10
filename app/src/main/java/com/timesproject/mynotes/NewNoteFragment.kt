@@ -11,6 +11,7 @@ import com.timesproject.mynotes.database.TextNoteDBHelper
 import com.timesproject.mynotes.databinding.FragmentNoteListBinding
 import com.timesproject.mynotes.listener.FragmentLoadActivityListener
 import com.timesproject.mynotes.model.TextNote
+import com.timesproject.mynotes.util.CommonConstants
 import com.timesproject.mynotes.util.NoteUtil
 
 class NewNoteFragment : Fragment() {
@@ -66,7 +67,7 @@ class NewNoteFragment : Fragment() {
 
     private fun initFromBundle() {
         arguments?.let {
-            noteId = it.getString("noteId", null)
+            noteId = it.getString(CommonConstants.KEY_NOTE_ID, null)
         }
     }
 
@@ -81,6 +82,7 @@ class NewNoteFragment : Fragment() {
         if(!noteId.isNullOrEmpty() && !noteTitle.isNullOrEmpty() && noteText.isNotEmpty()) {
             val result = noteDBHelper.saveNoteInDB(TextNote(noteId, noteTitle, noteText))
             if(result) {
+                //will remove this toast afterwards
                 Toast.makeText(context, "Note Saved", Toast.LENGTH_LONG).show()
                 activity?.supportFragmentManager?.popBackStack()
             } else {
